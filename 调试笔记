@@ -1,0 +1,19 @@
+### 需要修改dataset_enlarge_ratio降低每个epoch需要的迭代次数
+比如在train_Deblur_GOPRO.yml文件中修改dataset_enlarge_ratio=20，默认为200实在太大了
+```
+# 计算每个 epoch 所需的迭代次数，向上取整
+num_iter_per_epoch = math.ceil(
+    len(train_set) * dataset_enlarge_ratio / (dataset_opt['batch_size_per_gpu'] * opt['world_size']))
+# 获取配置中的总迭代次数并转换为整数
+total_iters = int(opt['train']['total_iter'])
+# 计算总 epoch 数，向上取整
+total_epochs = math.ceil(total_iters / (num_iter_per_epoch))
+# 记录训练统计信息
+logger.info('Training statistics:'
+            f'\n\tNumber of train images: {len(train_set)}'
+            f'\n\tDataset enlarge ratio: {dataset_enlarge_ratio}'
+            f'\n\tBatch size per gpu: {dataset_opt["batch_size_per_gpu"]}'
+            f'\n\tWorld size (gpu number): {opt["world_size"]}'
+            f'\n\tRequire iter number per epoch: {num_iter_per_epoch}'
+            f'\n\tTotal epochs: {total_epochs}; iters: {total_iters}.')
+```
